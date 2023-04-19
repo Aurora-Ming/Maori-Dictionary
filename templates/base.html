@@ -23,19 +23,14 @@
 			<span></span>
 			<ul>
                 <li><a href="/">Home</a></li>
-			</ul>
-            <ul>
                 <li><a href="/category">Category</a></li>
-            </ul>
-            <ul>
                 <li><a href="/list">List</a> </li>
+               {% if logged_in %}
+                <li><a href="/logout">logout</a></li>
+               {% else %}
+                <li><a href="/login">login</a></li>
+               {% endif %}
             </ul>
-
-            {% if logged_in %}
-                <ul><li><a href="/logout">logout</a></li></ul>
-            {% else %}
-                <ul><li><a href="/login">login</a></li></ul>
-            {% endif %}
 
 
 		</nav>

@@ -34,12 +34,12 @@ def is_logged_in():
 
 @app.route('/')
 def render_homepage():
-    return render_template('home.html')
+    return render_template('home.html', logged_in=is_logged_in())
 
 
 @app.route('/category')
 def render_category():
-    return render_template('category.html')
+    return render_template('category.html', logged_in=is_logged_in())
 
 
 @app.route('/list')
@@ -49,12 +49,13 @@ def render_list():
     cur = con.cursor()
     cur.execute(query, )
     vocabs_list = cur.fetchall()
-    return render_template('list.html', vocabs=vocabs_list)
+    return render_template('list.html', vocabs=vocabs_list,logged_in=is_logged_in())
 
 
 @app.route('/login', methods=['POST', 'GET'])
 def render_login():
     if is_logged_in():
+        print("logged_in")
         return redirect('/')
     print('Logging in')
     if request.method == "POST":
