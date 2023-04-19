@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Maōri Dictionary |     Home{% endblock %}
+
+{% block heading %}Maōri - English Dictionary-Word List{% endblock %}
+
+{% block main %}
+<table>
+<tr>
+    <td><h3>Maōri</h3></td>
+    <td><h3>English</h3></td>
+    <td><h3>Category</h3></td>
+    <td><h3>Level</h3></td>
+    <td><h3>Definition</h3></td>
+</tr>
+    {% for vocab_list in vocabs %}
+    <tr>
+    <td><a href{{ vocab_list[0] }}</td>
+    <td>{{ vocab_list[1] }}</td>
+    <td>{{ vocab_list[2] }}</td>
+    <td>{{ vocab_list[3] }}</td>
+    <td>{{ vocab_list[4] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

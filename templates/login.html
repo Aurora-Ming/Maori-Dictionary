@@ -1,1 +1,23 @@
+{% extends 'base.html' %}
 
+{% block title %}Maōri Dictionary |     Home{% endblock %}
+
+{% block heading %}Maōri - English Dictionary-Login{% endblock %}
+
+{% block main %}
+<form class="myform" method="POST">
+    <div class="form-group">
+        <div class="form-label">Email:</div>
+        <div class="form-element"><input type="email" name="email" id="email" required></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label">Password:</div>
+        <div class="form-element"><input type="password" name="password" id="email" required></div>
+    </div>
+    <div class="form-group">
+        <div class="form-label"></div>
+        <div class="form-element"><input type="submit" name="submit" id="submit" required></div>
+    </div>
+</form>
+<p><br><br><br>If you don't have an account, please<a href="/signup">sign up</a>.</p>
+{% endblock %}

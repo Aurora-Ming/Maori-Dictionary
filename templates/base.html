@@ -28,8 +28,16 @@
                 <li><a href="/category">Category</a></li>
             </ul>
             <ul>
-                <li><a href="/login">Login</a></li>
+                <li><a href="/list">List</a> </li>
             </ul>
+            <ul>
+            {% if logged_in %}
+                <li><a href="/logout">logout</a></li>
+            {% else %}
+                <li><a href="/login">login</a></li>
+            {% endif %}
+            </ul>
+
 		</nav>
 
 
