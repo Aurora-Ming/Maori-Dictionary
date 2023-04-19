@@ -30,13 +30,13 @@
             <ul>
                 <li><a href="/list">List</a> </li>
             </ul>
-            <ul>
+
             {% if logged_in %}
-                <li><a href="/logout">logout</a></li>
+                <ul><li><a href="/logout">logout</a></li></ul>
             {% else %}
-                <li><a href="/login">login</a></li>
+                <ul><li><a href="/login">login</a></li></ul>
             {% endif %}
-            </ul>
+
 
 		</nav>
 

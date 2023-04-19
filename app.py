@@ -69,9 +69,9 @@ def render_login():
         con.close()
 
         try:
-            user_id = user_data[4]
-            first_name = user_data[0]
-            db_password = user_data[3]
+            user_id = user_data[0]
+            first_name = user_data[1]
+            db_password = user_data[2]
         except IndexError:
             return redirect("/login?error=Invalid+username+or+password")
 
@@ -82,7 +82,7 @@ def render_login():
         session['firstname'] = first_name
         session['user_id'] = user_id
         print(session)
-        return redirect('/list')
+        return redirect('/')
     return render_template("login.html", logged_in=is_logged_in())
 
 
@@ -95,7 +95,7 @@ def logout():
 
 
 @app.route("/signup", methods=['POST', 'GET'])
-def render_signup(cue=None):
+def render_signup(cur=None):
     if is_logged_in():
         return redirect('/')
     if request.method == 'POST':
