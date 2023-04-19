@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %}Maōri Dictionary | Home{% endblock %}
+{% block title %}Maōri Dictionary |     Home{% endblock %}
 
 {% block heading %}Maōri - English Dictionary{% endblock %}
 
 {% block main %}
-<div class="Maori">
-{% for Maori in %}
-</div>
+<table>
+<tr><td><h3>Maōri</h3></td><td><h3>English</h3></td></tr>
+    {% for vocab_list in vocabs %}
+    <tr>
+    <td>{{ vocab_list[0] }}</td>
+    <td>{{ vocab_list[1] }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
