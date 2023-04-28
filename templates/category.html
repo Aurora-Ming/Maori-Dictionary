@@ -5,5 +5,12 @@
 {% block heading %}Maōri - English Dictionary - Category{% endblock %}
 
 {% block main %}
-
+<h1>Categories:</h1>
+  <table>
+    {% for category in categories %}
+        <tr>
+            <td><a href="/">{{category[1]}}</a></td>
+       </tr>
+    {% endfor %}
+  </table>
 {% endblock %}

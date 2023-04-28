@@ -39,7 +39,12 @@ def render_homepage():
 
 @app.route('/category')
 def render_category():
-    return render_template('category.html', logged_in=is_logged_in())
+    con = create_connection(DATABASE)
+    query = " SELECT cat_id, cat_name FROM category "
+    cur = con.cursor()
+    cur.execute(query, )
+    category = cur.fetchall()
+    return render_template('category.html', categories=category, logged_in=is_logged_in())
 
 
 @app.route('/list')
@@ -49,7 +54,7 @@ def render_list():
     cur = con.cursor()
     cur.execute(query, )
     vocabs_list = cur.fetchall()
-    return render_template('list.html', vocabs=vocabs_list,logged_in=is_logged_in())
+    return render_template('list.html', vocabs=vocabs_list, logged_in=is_logged_in())
 
 
 @app.route('/login', methods=['POST', 'GET'])
