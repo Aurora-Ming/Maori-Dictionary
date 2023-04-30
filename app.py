@@ -32,10 +32,18 @@ def is_logged_in():
         return True
 
 
+def teacher_logged_in():
+    if session.get("account_type") == "teacher":
+        print("teacher in")
+        return True
+    else:
+        print("student in")
+        return False
+
+
 @app.route('/')
 def render_homepage():
-
-    return render_template('home.html', logged_in=is_logged_in())
+    return render_template('home.html', logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
 @app.route('/category')
@@ -45,7 +53,8 @@ def render_category():
     cur = con.cursor()
     cur.execute(query, )
     category = cur.fetchall()
-    return render_template('category.html', categories=category, logged_in=is_logged_in())
+    return render_template('category.html', categories=category, logged_in=is_logged_in(),
+                           teacher_in=teacher_logged_in())
 
 
 @app.route('/list')
@@ -55,7 +64,7 @@ def render_list():
     cur = con.cursor()
     cur.execute(query, )
     vocabs_list = cur.fetchall()
-    return render_template('list.html', vocabs=vocabs_list, logged_in=is_logged_in())
+    return render_template('list.html', vocabs=vocabs_list, logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -90,7 +99,7 @@ def render_login():
         session['user_id'] = user_id
         print(session)
         return redirect('/')
-    return render_template("login.html", logged_in=is_logged_in())
+    return render_template("login.html", logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
 @app.route('/logout')
@@ -112,7 +121,7 @@ def render_signup(cur=None):
         email = request.form.get('email').lower().strip()
         password = request.form.get('password')
         password2 = request.form.get('password2')
-        account_type = request.form['account_type']
+        account_type = request.form.get('account_type')
 
         if password != password2:
             return redirect("/signup?error=Password+do+not+match")
@@ -122,10 +131,10 @@ def render_signup(cur=None):
 
         hashed_password = bcrypt.generate_password_hash(password)
         con = create_connection(DATABASE)
-        query = "INSERT INTO user(fname, lname,email,password,account_type) VALUES (?,?,?,?)"
+        query = "INSERT INTO user(fname, lname,email,password,account_type) VALUES (?,?,?,?,?)"
         cur = con.cursor()
         try:
-            cur.execute(query, (fname, lname, email, hashed_password))
+            cur.execute(query, (fname, lname, email, hashed_password, account_type))
         except sqlite3.IntegrityError:
             con.close()
             return redirect('/signup?error=Email+is+already+used')
@@ -134,7 +143,7 @@ def render_signup(cur=None):
         con.close()
 
         return redirect("/login")
-    return render_template("signup.html", logged_in=is_logged_in())
+    return render_template("signup.html", logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
 @app.route("/admin")
@@ -145,9 +154,15 @@ def render_admin():
     query = "SELECT * FROM category"
     cur = con.cursor()
     cur.execute(query)
-    category_list = cur.fetchall()
+    category = cur.fetchall()
     con.close
-    return render_template("admin.html", logged_in=is_logged_in(), categories=category_list)
+    con = create_connection(DATABASE)
+    query = "SELECT * FROM vocab_list"
+    cur = con.cursor()
+    cur.execute(query)
+    words = cur.fetchall()
+    con.close
+    return render_template("admin.html", logged_in=is_logged_in(), categories=category, teacher_in=teacher_logged_in(), word = words)
 
 
 app.run(host='0.0.0.0', debug=True)
