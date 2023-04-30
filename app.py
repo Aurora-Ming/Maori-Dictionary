@@ -34,6 +34,7 @@ def is_logged_in():
 
 @app.route('/')
 def render_homepage():
+
     return render_template('home.html', logged_in=is_logged_in())
 
 
@@ -111,6 +112,7 @@ def render_signup(cur=None):
         email = request.form.get('email').lower().strip()
         password = request.form.get('password')
         password2 = request.form.get('password2')
+        account_type = request.form['account_type']
 
         if password != password2:
             return redirect("/signup?error=Password+do+not+match")
@@ -120,7 +122,7 @@ def render_signup(cur=None):
 
         hashed_password = bcrypt.generate_password_hash(password)
         con = create_connection(DATABASE)
-        query = "INSERT INTO user(fname, lname,email,password) VALUES (?,?,?,?)"
+        query = "INSERT INTO user(fname, lname,email,password,account_type) VALUES (?,?,?,?)"
         cur = con.cursor()
         try:
             cur.execute(query, (fname, lname, email, hashed_password))
@@ -133,6 +135,19 @@ def render_signup(cur=None):
 
         return redirect("/login")
     return render_template("signup.html", logged_in=is_logged_in())
+
+
+@app.route("/admin")
+def render_admin():
+    if not is_logged_in():
+        return redirect('/?message=Need+to+be+logged+in.')
+    con = create_connection(DATABASE)
+    query = "SELECT * FROM category"
+    cur = con.cursor()
+    cur.execute(query)
+    category_list = cur.fetchall()
+    con.close
+    return render_template("admin.html", logged_in=is_logged_in(), categories=category_list)
 
 
 app.run(host='0.0.0.0', debug=True)

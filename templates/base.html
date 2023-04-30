@@ -30,6 +30,9 @@
                {% else %}
                 <li><a href="/login">login</a></li>
                {% endif %}
+              {% if account_type == 'teacher' %}
+                <li><a href="/admin">admin</a></li>
+              {% endif %}
             </ul>
 
 
