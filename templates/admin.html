@@ -32,23 +32,4 @@
         <div class="form-element"><input type="submit" value="Delete Category"></div>
     </div>
 </form>
-<h3>Word Admin</h3>
-<h4>Add an word</h4>
-<h4>Delete a word</h4>
-<form class="myform" method="POST" action="/deleteword">
-    <div class="form-group">
-        <div class="form-label"><label for="name">Word:</label></div>
-        <div class="form-element">
-            <select id="Level" name="Level">
-                {% for Maori in vocab_list %}
-                <option value="{{ word[0]}}, {{ word[4] }}">{{ word[0] }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="form-label"></div>
-        <div class="form-element"><input type="submit" value="Delete Category"></div>
-    </div>
- </form>
 {% endblock %}

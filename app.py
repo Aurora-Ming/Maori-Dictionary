@@ -77,7 +77,7 @@ def render_login():
         email = request.form['email'].strip().lower()
         password = request.form['password'].strip()
 
-        query = "SELECT user_id,fname,password FROM user WHERE email=?"
+        query = "SELECT user_id,fname,password,account_type FROM user WHERE email=?"
         con = create_connection(DATABASE)
         cur = con.cursor()
         cur.execute(query, (email,))
@@ -88,6 +88,7 @@ def render_login():
             user_id = user_data[0]
             first_name = user_data[1]
             db_password = user_data[2]
+            account_type = user_data[3]
         except IndexError:
             return redirect("/login?error=Invalid+username+or+password")
 
@@ -97,6 +98,7 @@ def render_login():
         session['email'] = email
         session['firstname'] = first_name
         session['user_id'] = user_id
+        session['account_type'] = account_type
         print(session)
         return redirect('/')
     return render_template("login.html", logged_in=is_logged_in(), teacher_in=teacher_logged_in())
