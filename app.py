@@ -41,24 +41,15 @@ def teacher_logged_in():
         return False
 
 
-@app.route('/',methods=['post', 'get'])
+@app.route('/', methods=['post', 'get'])
 def render_homepage():
     return render_template('home.html', logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
 @app.route('/search')
-def search():
-    con = create_connection(DATABASE)
-    query = " SELECT Maori,English FROM vocab_list "
-    cur = con.cursor()
-    cur.execute(query, )
-    Words = cur.fetchall()
-    keyword = request.args.get('keyword')
-    result = Words.query.filter(or_(Words.Maori.contains(keyword))).all()
-    if result:
-        return render_template('home.html',words=result)
-    else:
-        return 'Not found'
+def render_search():
+    return render_template('search.html', logged_in=is_logged_in(), teacher_in=teacher_logged_in())
+
 
 @app.route('/category')
 def render_category():
@@ -69,6 +60,13 @@ def render_category():
     category = cur.fetchall()
     return render_template('category.html', categories=category, logged_in=is_logged_in(),
                            teacher_in=teacher_logged_in())
+
+
+@app.route('/cat_word/<cat_name>')
+def render_cat_page(cat_name):
+    words= vocab_list.query.filter_by(Category=cat_name).all()
+    return render_template('cat_word.html',words=words)
+
 
 
 @app.route('/list')
@@ -178,7 +176,8 @@ def render_admin():
     cur.execute(query)
     words = cur.fetchall()
     con.close
-    return render_template("admin.html", logged_in=is_logged_in(), categories=category, teacher_in=teacher_logged_in(), word = words)
+    return render_template("admin.html", logged_in=is_logged_in(), categories=category, teacher_in=teacher_logged_in(),
+                           word=words)
 
 
 app.run(host='0.0.0.0', debug=True)
