@@ -4,7 +4,9 @@
     padding: 0;
     box-sizing: border-box;
 }
-
+body {
+    background-color: #ff0000;
+}
 #container {
     display: grid;
     grid-template-columns: 75px auto;

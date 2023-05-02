@@ -41,10 +41,24 @@ def teacher_logged_in():
         return False
 
 
-@app.route('/')
+@app.route('/',methods=['post', 'get'])
 def render_homepage():
     return render_template('home.html', logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
+
+@app.route('/search')
+def search():
+    con = create_connection(DATABASE)
+    query = " SELECT Maori,English FROM vocab_list "
+    cur = con.cursor()
+    cur.execute(query, )
+    Words = cur.fetchall()
+    keyword = request.args.get('keyword')
+    result = Words.query.filter(or_(Words.Maori.contains(keyword))).all()
+    if result:
+        return render_template('home.html',words=result)
+    else:
+        return 'Not found'
 
 @app.route('/category')
 def render_category():
