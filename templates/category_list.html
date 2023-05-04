@@ -6,11 +6,9 @@
 
 {% block main %}
 <h1>Categories:</h1>
-  <table>
+  <ul>
     {% for category in categories %}
-        <tr>
-            <td><a href="/{{ category[1] }}">{{category[1]}}</a></td>
-       </tr>
+       <li><a href="{{ url_for('category_detail' , id=category.id) }}">{{ cat.name.cat_Name }}</a></li>
     {% endfor %}
-  </table>
+  </ul>
 {% endblock %}

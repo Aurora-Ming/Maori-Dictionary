@@ -1,12 +1,20 @@
 import sqlite3
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
-from flask import Flask, render_template, request, redirect, session, app
+from flask import Flask, render_template, request, redirect, session, app, g
 
 DATABASE = "dictionary.db"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "66666"
+
+
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row
+    return db
 
 
 def create_connection(db_file):
@@ -51,22 +59,24 @@ def render_search():
     return render_template('search.html', logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
-@app.route('/category')
+@app.route('/category_list')
 def render_category():
-    con = create_connection(DATABASE)
-    query = " SELECT cat_id, cat_name FROM category "
-    cur = con.cursor()
-    cur.execute(query, )
-    category = cur.fetchall()
-    return render_template('category.html', categories=category, logged_in=is_logged_in(),
+    db = get_db()
+    categories = db.execute('SELECT * FROM category').fetchall()
+    return render_template('category_list.html', logged_in=is_logged_in(), categories=categories,
                            teacher_in=teacher_logged_in())
 
 
-@app.route('/cat_word/<cat_name>')
-def render_cat_page(cat_name):
-    words= vocab_list.query.filter_by(Category=cat_name).all()
-    return render_template('cat_word.html',words=words)
-
+@app.route('/category_detail/<int:word_id>')
+def category_detail(id):
+    db = get_db()
+    category = db.execute('SELECT * FROM category WHERE id = ?', (id,)).fetchone()
+    con = create_connection(DATABASE)
+    query = " SELECT Maori ,  English , Category , Level , Definition FROM vocab_list "
+    cur = con.cursor()
+    cur.execute(query, )
+    vocabs_list = cur.fetchall()
+    return render_template('category_detail.html', category=category)
 
 
 @app.route('/list')
