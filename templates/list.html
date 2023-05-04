@@ -13,13 +13,13 @@
     <td><h3>Level</h3></td>
     <td><h3>Definition</h3></td>
 </tr>
-    {% for vocab_list in vocabs %}
+    {% for word in words %}
       <tr>
-        <td><a href="/">{{ vocab_list[0] }}</a></td>
-        <td>{{ vocab_list[1] }}</td>
-        <td>{{ vocab_list[2] }}</td>
-        <td>{{ vocab_list[3] }}</td>
-        <td>{{ vocab_list[4] }}</td>
+        <td><a href="{{ url_for('word_detail',word_id=word[5]) }}">{{ word[0] }}</a></td>
+        <td>{{word[1] }}</td>
+        <td>{{ word[2] }}</td>
+        <td>{{ word[3] }}</td>
+        <td>{{ word[4] }}</td>
       </tr>
     {% endfor %}
 </table>

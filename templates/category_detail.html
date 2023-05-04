@@ -5,10 +5,12 @@
 {% block heading %}Maōri - English Dictionary{% endblock %}
 
 {% block main %}
-<h1>{{ category[1] }}</h1>
-    {% for Maori in vocab_list %}
-    <li><a href='/'>{{ vocab_list[0] }}</a></li>
-    {% endfor %}
-
-
+ <h1>{{ category_name }}</h1>
+    <table>
+       <tr>
+         {% for word in words %}
+           <td><a href="{{ url_for('word_detail', word_id=word[3]) }}">{{ word[0] }} ({{ word[1] }})</a></td>
+         {% endfor %}
+       </tr>
+    </table>
 {% endblock %}

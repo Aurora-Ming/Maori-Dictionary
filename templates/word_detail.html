@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Maōri Dictionary |     Home{% endblock %}
+
+{% block heading %}Maōri - English Dictionary{% endblock %}
+
+{% block main %}
+  <head>
+    <title>{{ word[0] }}</title>
+  </head>
+  <body>
+    <h1>{{ word[0] }} ({{ word[1] }})</h1>
+    <h3>Definition:</h3><h5>{{ word[3] }}</h5>
+    <h3>Category:</h3><h5> {{ word[2] }}</h5>
+    <h3>Level:</h3><h5>{{ word[4] }}</h5>
+    <h4>Editor:</h4>
+  </body>
+
+{% endblock %}

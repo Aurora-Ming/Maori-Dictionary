@@ -55,8 +55,17 @@ def render_homepage():
 
 
 @app.route('/search')
-def render_search():
-    return render_template('search.html', logged_in=is_logged_in(), teacher_in=teacher_logged_in())
+def search():
+    return render_template('search.html')
+
+
+@app.route('/search_result')
+def search_results():
+    search_term = request.args.get('search_term')
+    db = get_db()
+    words = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ?', ('%' + search_term + '%',)).fetchall()
+    return render_template('search_results.html', words=words, logged_in=is_logged_in(),
+                           teacher_in=teacher_logged_in())
 
 
 @app.route('/category_list')
@@ -67,26 +76,27 @@ def render_category():
                            teacher_in=teacher_logged_in())
 
 
-@app.route('/category_detail/<int:word_id>')
-def category_detail(id):
+@app.route('/category_detail/<int:cat_id>')
+def category_detail(cat_id):
     db = get_db()
-    category = db.execute('SELECT * FROM category WHERE id = ?', (id,)).fetchone()
-    con = create_connection(DATABASE)
-    query = " SELECT Maori ,  English , Category , Level , Definition FROM vocab_list "
-    cur = con.cursor()
-    cur.execute(query, )
-    vocabs_list = cur.fetchall()
-    return render_template('category_detail.html', category=category)
+    words = db.execute('SELECT * FROM vocab_list WHERE Category = ?', (cat_id,)).fetchall()
+    category_name = db.execute('SELECT * FROM Category WHERE cat_id = ?', (cat_id,)).fetchone()[1]
+    return render_template('category_detail.html', category_name=category_name, words=words)
+
+
+@app.route('/word/<int:word_id>')
+def word_detail(word_id):
+    db = get_db()
+    word = db.execute('SELECT * FROM vocab_list WHERE word_id = ?', (word_id,)).fetchone()
+    return render_template('word_detail.html', word=word, logged_in=is_logged_in()
+                           , teacher_in=teacher_logged_in())
 
 
 @app.route('/list')
 def render_list():
-    con = create_connection(DATABASE)
-    query = " SELECT Maori ,  English , Category , Level , Definition FROM vocab_list "
-    cur = con.cursor()
-    cur.execute(query, )
-    vocabs_list = cur.fetchall()
-    return render_template('list.html', vocabs=vocabs_list, logged_in=is_logged_in(), teacher_in=teacher_logged_in())
+    db = get_db()
+    words = db.execute('SELECT * FROM vocab_list').fetchall()
+    return render_template('list.html', words=words, logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
 @app.route('/login', methods=['POST', 'GET'])
