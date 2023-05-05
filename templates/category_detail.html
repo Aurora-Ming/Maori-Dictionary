@@ -7,10 +7,8 @@
 {% block main %}
  <h1>{{ category_name }}</h1>
     <table>
-       <tr>
-         {% for word in words %}
-           <td><a href="{{ url_for('word_detail', word_id=word[3]) }}">{{ word[0] }} ({{ word[1] }})</a></td>
+        {% for word in words %}
+            <tr><td><a href="{{ url_for('word_detail', word_id=word[5]) }}">{{ word[0] }} ({{ word[1] }})</a></td></tr>
          {% endfor %}
-       </tr>
     </table>
 {% endblock %}
