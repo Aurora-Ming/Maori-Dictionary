@@ -173,12 +173,6 @@ def render_admin():
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in.')
     con = create_connection(DATABASE)
-    query = "SELECT * FROM category"
-    cur = con.cursor()
-    cur.execute(query)
-    category = cur.fetchall()
-    con.close
-    con = create_connection(DATABASE)
     query = "SELECT * FROM vocab_list"
     cur = con.cursor()
     cur.execute(query)
