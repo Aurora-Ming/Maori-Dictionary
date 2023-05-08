@@ -54,18 +54,6 @@ def render_homepage():
     return render_template('home.html', logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
-@app.route('/search')
-def search():
-    return render_template('search.html')
-
-
-@app.route('/search_result')
-def search_results():
-    search_term = request.args.get('search_term')
-    db = get_db()
-    words = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ?', ('%' + search_term + '%',)).fetchall()
-    return render_template('search_results.html', words=words, logged_in=is_logged_in(),
-                           teacher_in=teacher_logged_in())
 
 
 @app.route('/category_list')
@@ -80,7 +68,7 @@ def render_category():
 def category_detail(cat_id):
     db = get_db()
     words = db.execute('SELECT * FROM vocab_list WHERE cat_id = ?', (cat_id,)).fetchall()
-    category_name = db.execute('SELECT * FROM category WHERE cat_id = ?', (cat_id,)).fetchone()[1]
+    category_name = db.execute('SELECT * FROM Category WHERE cat_id = ?', (cat_id,)).fetchone()[1]
     return render_template('category_detail.html', category_name=category_name, words=words)
 
 
