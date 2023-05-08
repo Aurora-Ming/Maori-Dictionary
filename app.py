@@ -4,6 +4,7 @@ from sqlite3 import Error
 from flask_bcrypt import Bcrypt
 from flask import Flask, render_template, request, redirect, session, app, g
 
+
 DATABASE = "dictionary.db"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -68,7 +69,7 @@ def render_category():
 @app.route('/category_detail/<int:cat_id>')
 def category_detail(cat_id):
     db = get_db()
-    words = db.execute('SELECT * FROM vocab_list WHERE category_id = ?', (category_id,)).fetchall()
+    words = db.execute('SELECT * FROM vocab_list WHERE cat_id = ?', (cat_id,)).fetchall()
     category_name = db.execute('SELECT * FROM Category WHERE cat_id = ?', (cat_id,)).fetchone()[1]
     return render_template('category_detail.html', category_name=category_name, words=words)
 
@@ -77,10 +78,12 @@ def category_detail(cat_id):
 def word_detail(word_id):
     db = get_db()
     word = db.execute('SELECT * FROM vocab_list WHERE word_id = ?', (word_id,)).fetchone()
-    category=db.execute('SELECT * FROM catrgory WHERE cat_id = category_id', (cat_id,)).fetchone()
-    editor=db.execute('SELECT * FROM user WHERE user_id= editor_id', (user_id,)).fetchone()
+    editor_id = word['editor_id']
+    editor = db.execute('SELECT fname FROM user WHERE user_id = ?', (editor_id,)).fetchone()
+    cat_id = word['cat_id']
+    category = db.execute('SELECT cat_name FROM category WHERE cat_id = ?', (cat_id,)).fetchone()
     return render_template('word_detail.html', word=word, logged_in=is_logged_in()
-                           , teacher_in=teacher_logged_in())
+                           , teacher_in=teacher_logged_in(), editor=editor, category=category)
 
 
 @app.route('/list')
@@ -175,14 +178,8 @@ def render_signup(cur=None):
 def render_admin():
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in.')
-    con = create_connection(DATABASE)
-    query = "SELECT * FROM vocab_list"
-    cur = con.cursor()
-    cur.execute(query)
-    words = cur.fetchall()
-    con.close
-    return render_template("admin.html", logged_in=is_logged_in(), categories=category, teacher_in=teacher_logged_in(),
-                           word=words)
+
+    return render_template("admin.html", logged_in=is_logged_in(), teacher_in=teacher_logged_in(),)
 
 
 app.run(host='0.0.0.0', debug=True)
