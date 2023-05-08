@@ -67,7 +67,7 @@ def render_category():
 @app.route('/category_detail/<int:cat_id>')
 def category_detail(cat_id):
     db = get_db()
-    words = db.execute('SELECT * FROM vocab_list WHERE cat_id = ?', (cat_id,)).fetchall()
+    words = db.execute('SELECT * FROM vocab_list WHERE category_id = ?', (category_id,)).fetchall()
     category_name = db.execute('SELECT * FROM Category WHERE cat_id = ?', (cat_id,)).fetchone()[1]
     return render_template('category_detail.html', category_name=category_name, words=words)
 
@@ -76,6 +76,8 @@ def category_detail(cat_id):
 def word_detail(word_id):
     db = get_db()
     word = db.execute('SELECT * FROM vocab_list WHERE word_id = ?', (word_id,)).fetchone()
+    category=db.execute('SELECT * FROM catrgory WHERE cat_id = category_id', (cat_id,)).fetchone()
+    editor=db.execute('SELECT * FROM user WHERE user_id= editor_id', (user_id,)).fetchone()
     return render_template('word_detail.html', word=word, logged_in=is_logged_in()
                            , teacher_in=teacher_logged_in())
 
