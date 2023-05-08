@@ -55,18 +55,6 @@ def render_homepage():
     return render_template('home.html', logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
-@app.route('/search')
-def search():
-    return render_template('search.html')
-
-
-@app.route('/search_result')
-def search_results():
-    search_term = request.args.get('search_term')
-    db = get_db()
-    words = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ?', ('%' + search_term + '%',)).fetchall()
-    return render_template('search_results.html', words=words, logged_in=is_logged_in(),
-                           teacher_in=teacher_logged_in())
 
 
 @app.route('/category_list')
@@ -80,8 +68,8 @@ def render_category():
 @app.route('/category_detail/<int:cat_id>')
 def category_detail(cat_id):
     db = get_db()
-    words = db.execute('SELECT * FROM vocab_list WHERE cat_id = ?', (cat_id,)).fetchall()
-    category_name = db.execute('SELECT * FROM category WHERE cat_id = ?', (cat_id,)).fetchone()[1]
+    words = db.execute('SELECT * FROM vocab_list WHERE category_id = ?', (category_id,)).fetchall()
+    category_name = db.execute('SELECT * FROM Category WHERE cat_id = ?', (cat_id,)).fetchone()[1]
     return render_template('category_detail.html', category_name=category_name, words=words)
 
 
@@ -89,6 +77,8 @@ def category_detail(cat_id):
 def word_detail(word_id):
     db = get_db()
     word = db.execute('SELECT * FROM vocab_list WHERE word_id = ?', (word_id,)).fetchone()
+    category=db.execute('SELECT * FROM catrgory WHERE cat_id = category_id', (cat_id,)).fetchone()
+    editor=db.execute('SELECT * FROM user WHERE user_id= editor_id', (user_id,)).fetchone()
     return render_template('word_detail.html', word=word, logged_in=is_logged_in()
                            , teacher_in=teacher_logged_in())
 
@@ -185,12 +175,6 @@ def render_signup(cur=None):
 def render_admin():
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in.')
-    con = create_connection(DATABASE)
-    query = "SELECT * FROM category"
-    cur = con.cursor()
-    cur.execute(query)
-    category = cur.fetchall()
-    con.close
     con = create_connection(DATABASE)
     query = "SELECT * FROM vocab_list"
     cur = con.cursor()

@@ -16,7 +16,7 @@
     {% for word in words %}
       <tr>
         <td><a href="{{ url_for('word_detail',word_id=word[5]) }}">{{ word[0] }}</a></td>
-        <td>{{word[1] }}</td>
+          <td><a href="{{ url_for('word_detail',word_id=word[5]) }}">{{word[1] }}</a></td>
         <td>{{ word[2] }}</td>
         <td>{{ word[3] }}</td>
         <td>{{ word[4] }}</td>
