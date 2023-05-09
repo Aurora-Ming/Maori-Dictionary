@@ -221,18 +221,14 @@ def add_word():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
+    db = get_db()
     if request.method == 'POST':
-        # get search query from form
-        search_query = request.form['search_query']
-
-        # search for words in the database
-        db = get_db()
-        words = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ? OR English LIKE ?',
-                           (f'%{search_query}%', f'%{search_query}%')).fetchall()
-
-        return render_template('search_results.html', words=words, search_query=search_query)
-
-    return render_template('search.html')
+        search_term = request.form['search_term']
+        # Use '=' operator for exact match
+        words = db.execute('SELECT * FROM vocab_list WHERE word_m = ? OR word_e = ?', (search_term, search_term)).fetchall()
+        return render_template('search_results.html', words=words)
+    else:
+        return render_template('search.html')
 
 
 @app.route('/search_results')
@@ -240,7 +236,8 @@ def search_results():
     maori = request.args.get('maori')
     english = request.args.get('english')
     db = get_db()
-    results = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ? OR English LIKE ?', ('%' + maori + '%', '%' + english + '%',)).fetchall()
+    results = db.execute('SELECT * FROM vocab_list WHERE lower(Maori) = ? OR lower(English) = ?',
+                         (maori.lower(), english.lower(),)).fetchall()
     return render_template('search_results.html', results=results)
 
 
