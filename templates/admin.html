@@ -3,7 +3,7 @@
 {% block pageheading %}Administration{% endblock %}
 
 {% block main %}
-<h4>Add a word</h4>
+<h1>Add a word</h1>
 <form class="myform" method="POST" action="/add_word">
      <div class="form-group">
         <div class="form-label">Maori:</div>
@@ -25,17 +25,45 @@
                 {% endfor %}
            </select><br>
      </div>
+     <div class="form-group">
+        <div class="form-label">Image:</div>
+        <div class="form-element">
+            <label for="Image"></label>
+            <input type="file" name="Image" id="Image">
+            <input type="checkbox" name="NoImage" id="NoImage" value="noimage">
+            <label for="NoImage">No Image</label>
+        </div>
+     </div>
      <div class="form_group">
          <div class="form-label">Level:</div>
         <select id="Level" name="Level">
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
         </select><br>
     </div>
+
     <div class="form-group">
         <div class="form-label"></div>
         <div class="form-element"><input type="submit" value="submit"></div>
     </div>
 </form>
+    <script>
+    const imageInput = document.getElementById('Image');
+    const noImageCheckbox = document.getElementById('NoImage');
+    noImageCheckbox.addEventListener('change', () => {
+        if (noImageCheckbox.checked) {
+            imageInput.disabled = true;
+        } else {
+            imageInput.disabled = false;
+        }
+    });
+</script>
 {% endblock %}

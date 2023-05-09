@@ -4,7 +4,6 @@ from sqlite3 import Error
 from flask_bcrypt import Bcrypt
 from flask import Flask, render_template, request, redirect, session, app, g
 
-
 DATABASE = "dictionary.db"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -56,8 +55,6 @@ def render_homepage():
     return render_template('home.html', logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
-
-
 @app.route('/category_list')
 def render_category():
     db = get_db()
@@ -86,16 +83,26 @@ def word_detail(word_id):
                            , teacher_in=teacher_logged_in(), editor=editor, category=category)
 
 
+@app.route('/word/<int:word_id>/delete', methods=['POST'])
+def delete_word(word_id):
+    db = get_db()
+    db.execute('DELETE FROM vocab_list WHERE word_id = ?', (word_id,))
+    db.commit()
+    return redirect("/")
+
+
 @app.route('/list')
 def render_list():
     db = get_db()
     words = db.execute('SELECT * FROM vocab_list').fetchall()
-    editor_id = words['editor_id']
-    editor = db.execute('SELECT fname FROM user WHERE user_id = ?', (editor_id,)).fetchone()
-    cat_id = words['cat_id']
-    category = db.execute('SELECT cat_name FROM category WHERE cat_id = ?', (cat_id,)).fetchone()
-    return render_template('list.html', words=words, logged_in=is_logged_in(), teacher_in=teacher_logged_in(),
-                           editor=editor, category=category)
+    word_list = []
+    for word in words:
+        editor_id = word['editor_id']
+        editor = db.execute('SELECT fname FROM user WHERE user_id = ?', (editor_id,)).fetchone()
+        cat_id = word['cat_id']
+        category = db.execute('SELECT cat_name FROM category WHERE cat_id = ?', (cat_id,)).fetchone()
+        word_list.append((word, editor, category))
+    return render_template('list.html', word_list=word_list, logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -186,26 +193,55 @@ def render_admin():
     db = get_db()
     words = db.execute('SELECT * FROM vocab_list').fetchall()
     categories = db.execute('SELECT * FROM category').fetchall()
-    return render_template("admin.html", logged_in=is_logged_in(), teacher_in=teacher_logged_in(),words=words,categories=categories)
+    return render_template("admin.html", logged_in=is_logged_in(), teacher_in=teacher_logged_in(), words=words,
+                           categories=categories)
 
 
-@app.route("/add_word",methods=['POST'])
+@app.route("/add_word", methods=['POST'])
 def add_word():
-    db= get_db()
-    Maori = request.form.get('Maori')
-    English = request.form.get('English')
+    db = get_db()
+    maori = request.form.get('Maori')
+    english = request.form.get('English')
     cat_id = request.form.get('cat_id')
-    Definition = request.form.get('Definition')
-    Level = request.form.get('Level')
-    editor_id=session.get("user_id")
-    print(Maori,English,cat_id,Definition,Level,editor_id)
-    con = create_connection(DATABASE)
-    query = "INSERT INTO vocab_list(Maori,English,cat_id,Definition,Level,editor_id) VALUES (?,?,?,?,?,?)"
-    cur = con.cursor()
-    con.commit()
-    con.close()
+    definition = request.form.get('Definition')
+    level = request.form.get('Level')
+    editor_id = session.get("user_id")
+    print(maori, english, cat_id, definition, level, editor_id)
+    image = request.files.get('image')
+    if image:
+        image_path = f"static/images/{image.filename}"
+        image.save(image_path)
+    else:
+        image_path = f"stastic/images/noimage.jpg"
+    db.execute("INSERT INTO vocab_list(Maori, English, cat_id, Definition, Level, editor_id) VALUES (?, ?, ?, ?, ?, ?)",
+               (maori, english, cat_id, definition, level, editor_id))
+    db.commit()
     return redirect('/admin')
 
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        # get search query from form
+        search_query = request.form['search_query']
+
+        # search for words in the database
+        db = get_db()
+        words = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ? OR English LIKE ?',
+                           (f'%{search_query}%', f'%{search_query}%')).fetchall()
+
+        return render_template('search_results.html', words=words, search_query=search_query)
+
+    return render_template('search.html')
+
+
+@app.route('/search_results')
+def search_results():
+    maori = request.args.get('maori')
+    english = request.args.get('english')
+    db = get_db()
+    results = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ? OR English LIKE ?', ('%' + maori + '%', '%' + english + '%',)).fetchall()
+    return render_template('search_results.html', results=results)
 
 
 app.run(host='0.0.0.0', debug=True)

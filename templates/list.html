@@ -14,14 +14,14 @@
     <td><h3>Definition</h3></td>
     <td><h3>Editor</h3></td>
 </tr>
-    {% for word in words %}
+    {% for word, editor, category in word_list %}
       <tr>
-        <td><a href="{{ url_for('word_detail',word_id=word[5]) }}">{{ word[0] }}</a></td>
-          <td><a href="{{ url_for('word_detail',word_id=word[5]) }}">{{word[1] }}</a></td>
-        <td>{{ category[0] }}</td>
-        <td>{{ word[4] }}</td>
-        <td>{{ word[3] }}</td>
-        <td>{{ editor[0] }}</td>
+        <td><a href="{{ url_for('word_detail',word_id=word[5]) }}">{{ word['Maori'] }}</a></td>
+          <td><a href="{{ url_for('word_detail',word_id=word[5]) }}">{{word['English'] }}</a></td>
+        <td>{{ category['cat_name'] }}</td>
+        <td>{{ word['Level'] }}</td>
+        <td>{{ word['Definition'] }}</td>
+        <td>{{ editor['fname'] }}</td>
       </tr>
     {% endfor %}
 </table>

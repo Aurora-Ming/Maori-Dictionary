@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Maōri Dictionary | Search Results{% endblock %}
+
+{% block heading %}Search Results{% endblock %}
+
+{% block main %}
+    {% if results %}
+        <ul>
+        {% for word in results %}
+            <li><a href="/word/{{ word['word_id'] }}">{{ word['Maori'] }} ({{ word['English'] }})</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+{% endblock %}

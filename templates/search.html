@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Maōri Dictionary | Search{% endblock %}
+
+{% block heading %}Search{% endblock %}
+
+{% block main %}
+    <h4>Search for a word</h4>
+    <form method="GET" action="/search_results">
+        <div class="form-group">
+            <div class="form-label">Maori:</div>
+            <div class="form-element"><label for="maori"></label><input type="text" name="maori" id="maori"></div>
+        </div>
+        <div class="form-group">
+            <div class="form-label">English:</div>
+            <div class="form-element"><label for="english"></label><input type="text" name="english" id="english"></div>
+        </div>
+        <div class="form-group">
+            <div class="form-element"><input type="submit" value="Search"></div>
+        </div>
+    </form>
+{% endblock %}
