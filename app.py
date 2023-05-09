@@ -47,7 +47,7 @@ def teacher_logged_in():
         print("teacher in")
         return True
     else:
-        print("student in")
+        print("teacher not in")
         return False
 
 
@@ -90,7 +90,12 @@ def word_detail(word_id):
 def render_list():
     db = get_db()
     words = db.execute('SELECT * FROM vocab_list').fetchall()
-    return render_template('list.html', words=words, logged_in=is_logged_in(), teacher_in=teacher_logged_in())
+    editor_id = words['editor_id']
+    editor = db.execute('SELECT fname FROM user WHERE user_id = ?', (editor_id,)).fetchone()
+    cat_id = words['cat_id']
+    category = db.execute('SELECT cat_name FROM category WHERE cat_id = ?', (cat_id,)).fetchone()
+    return render_template('list.html', words=words, logged_in=is_logged_in(), teacher_in=teacher_logged_in(),
+                           editor=editor, category=category)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -178,8 +183,29 @@ def render_signup(cur=None):
 def render_admin():
     if not is_logged_in():
         return redirect('/?message=Need+to+be+logged+in.')
+    db = get_db()
+    words = db.execute('SELECT * FROM vocab_list').fetchall()
+    categories = db.execute('SELECT * FROM category').fetchall()
+    return render_template("admin.html", logged_in=is_logged_in(), teacher_in=teacher_logged_in(),words=words,categories=categories)
 
-    return render_template("admin.html", logged_in=is_logged_in(), teacher_in=teacher_logged_in(),)
+
+@app.route("/add_word",methods=['POST'])
+def add_word():
+    db= get_db()
+    Maori = request.form.get('Maori')
+    English = request.form.get('English')
+    cat_id = request.form.get('cat_id')
+    Definition = request.form.get('Definition')
+    Level = request.form.get('Level')
+    editor_id=session.get("user_id")
+    print(Maori,English,cat_id,Definition,Level,editor_id)
+    con = create_connection(DATABASE)
+    query = "INSERT INTO vocab_list(Maori,English,cat_id,Definition,Level,editor_id) VALUES (?,?,?,?,?,?)"
+    cur = con.cursor()
+    con.commit()
+    con.close()
+    return redirect('/admin')
+
 
 
 app.run(host='0.0.0.0', debug=True)

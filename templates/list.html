@@ -12,14 +12,16 @@
     <td><h3>Category</h3></td>
     <td><h3>Level</h3></td>
     <td><h3>Definition</h3></td>
+    <td><h3>Editor</h3></td>
 </tr>
     {% for word in words %}
       <tr>
         <td><a href="{{ url_for('word_detail',word_id=word[5]) }}">{{ word[0] }}</a></td>
           <td><a href="{{ url_for('word_detail',word_id=word[5]) }}">{{word[1] }}</a></td>
-        <td>{{ word[2] }}</td>
-        <td>{{ word[3] }}</td>
+        <td>{{ category[0] }}</td>
         <td>{{ word[4] }}</td>
+        <td>{{ word[3] }}</td>
+        <td>{{ editor[0] }}</td>
       </tr>
     {% endfor %}
 </table>
