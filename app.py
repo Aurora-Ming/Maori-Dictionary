@@ -207,16 +207,17 @@ def add_word():
     level = request.form.get('Level')
     editor_id = session.get("user_id")
     print(maori, english, cat_id, definition, level, editor_id)
-    image = request.files.get('image')
-    if image:
-        image_path = f"static/images/{image.filename}"
-        image.save(image_path)
-    else:
-        image_path = f"static/images/noimage.png"
+    image="noimage.png"
+    #image = request.files.get('image')
 
-    db.execute("INSERT INTO vocab_list(Maori, English, cat_id, Definition, Level,"
-               " editor_id) VALUES (?, ?, ?, ?, ?, ?,?)",
-               (maori, english, cat_id, definition, level, editor_id))
+    # if image:
+    #     image_path = f"static/images/{image.filename}"
+    #     image.save(image_path)
+    # else:
+    #image_path = f"static/images/noimage.png"
+
+    db.execute("INSERT INTO vocab_list(Maori, English, cat_id, Definition, Level, editor_id,images) VALUES (?, ?, ?, ?, ?, ?,?)",
+               (maori, english, cat_id, definition, level, editor_id,image))
     db.commit()
     return redirect('/list')
 
