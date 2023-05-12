@@ -212,11 +212,13 @@ def add_word():
         image_path = f"static/images/{image.filename}"
         image.save(image_path)
     else:
-        image_path = f"stastic/images/noimage.jpg"
-    db.execute("INSERT INTO vocab_list(Maori, English, cat_id, Definition, Level, editor_id) VALUES (?, ?, ?, ?, ?, ?)",
+        image_path = f"static/images/noimage.png"
+
+    db.execute("INSERT INTO vocab_list(Maori, English, cat_id, Definition, Level,"
+               " editor_id) VALUES (?, ?, ?, ?, ?, ?,?)",
                (maori, english, cat_id, definition, level, editor_id))
     db.commit()
-    return redirect('/admin')
+    return redirect('/list')
 
 
 @app.route('/search', methods=['GET', 'POST'])
@@ -225,10 +227,11 @@ def search():
     if request.method == 'POST':
         search_term = request.form['search_term']
         # Use '=' operator for exact match
-        words = db.execute('SELECT * FROM vocab_list WHERE word_m = ? OR word_e = ?', (search_term, search_term)).fetchall()
+        words = db.execute('SELECT * FROM vocab_list WHERE word_m = ? OR word_e = ?',
+                           (search_term, search_term)).fetchall()
         return render_template('search_results.html', words=words)
     else:
-        return render_template('search.html')
+     return render_template('search.html')
 
 
 @app.route('/search_results')
@@ -236,7 +239,7 @@ def search_results():
     maori = request.args.get('maori')
     english = request.args.get('english')
     db = get_db()
-    results = db.execute('SELECT * FROM vocab_list WHERE lower(Maori) = ? OR lower(English) = ?',
+    results = db.execute('SELECT * FROM vocab_list WHERE lower(Maori) LIKE ? OR lower(English) LIKE ?',
                          (maori.lower(), english.lower(),)).fetchall()
     return render_template('search_results.html', results=results)
 
