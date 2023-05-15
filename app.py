@@ -59,7 +59,7 @@ def render_homepage():
 def render_category():
     db = get_db()
     categories = db.execute('SELECT * FROM category').fetchall()
-    #get categories from database
+    # get categories from database
     return render_template('category_list.html', logged_in=is_logged_in(), categories=categories,
                            teacher_in=teacher_logged_in())
 
@@ -69,7 +69,7 @@ def category_detail(cat_id):
     db = get_db()
     words = db.execute('SELECT * FROM vocab_list WHERE cat_id = ?', (cat_id,)).fetchall()
     category_name = db.execute('SELECT * FROM Category WHERE cat_id = ?', (cat_id,)).fetchone()[1]
-    #Extract all the words under that category from the database
+    # Extract all the words under that category from the database
     return render_template('category_detail.html', category_name=category_name, words=words)
 
 
@@ -81,7 +81,7 @@ def word_detail(word_id):
     editor = db.execute('SELECT fname FROM user WHERE user_id = ?', (editor_id,)).fetchone()
     cat_id = word['cat_id']
     category = db.execute('SELECT cat_name FROM category WHERE cat_id = ?', (cat_id,)).fetchone()
-    #get all the details of the word from the database
+    # get all the details of the word from the database
     return render_template('word_detail.html', word=word, logged_in=is_logged_in()
                            , teacher_in=teacher_logged_in(), editor=editor, category=category)
 
@@ -91,7 +91,7 @@ def delete_word(word_id):
     db = get_db()
     db.execute('DELETE FROM vocab_list WHERE word_id = ?', (word_id,))
     db.commit()
-    #delete word
+    # delete word
     return redirect("/")
 
 
@@ -106,7 +106,7 @@ def render_list():
         cat_id = word['cat_id']
         category = db.execute('SELECT cat_name FROM category WHERE cat_id = ?', (cat_id,)).fetchone()
         word_list.append((word, editor, category))
-        #get all the words and their details from the database
+        # get all the words and their details from the database
     return render_template('list.html', word_list=word_list, logged_in=is_logged_in(), teacher_in=teacher_logged_in())
 
 
@@ -115,7 +115,7 @@ def render_login():
     if is_logged_in():
         print("logged_in")
         return redirect('/')
-    #Determine whether the user has logged in
+    # Determine whether the user has logged in
     print('Logging in')
     if request.method == "POST":
         email = request.form['email'].strip().lower()
@@ -127,7 +127,7 @@ def render_login():
         cur.execute(query, (email,))
         user_data = cur.fetchone()
         con.close()
-     #Extract user data from the database
+        # Extract user data from the database
         try:
             user_id = user_data[0]
             first_name = user_data[1]
@@ -138,7 +138,7 @@ def render_login():
 
         if not bcrypt.check_password_hash(db_password, password):
             return redirect(request.referrer + "?error=Email+invalid+or+password incorrect")
-        #Check whether the password is correct
+        # Check whether the password is correct
         session['email'] = email
         session['firstname'] = first_name
         session['user_id'] = user_id
@@ -168,14 +168,14 @@ def render_signup(cur=None):
         password = request.form.get('password')
         password2 = request.form.get('password2')
         account_type = request.form.get('account_type')
-        #Record user data
+        # Record user data
         if password != password2:
             return redirect("/signup?error=Password+do+not+match")
 
         if len(password) < 8:
             return redirect("/signup?error=Password+must+be+at+least+8+characters")
 
-        hashed_password = bcrypt.generate_password_hash(password)#Encrypt a password
+        hashed_password = bcrypt.generate_password_hash(password)  # Encrypt a password
         con = create_connection(DATABASE)
         query = "INSERT INTO user(fname, lname,email,password,account_type) VALUES (?,?,?,?,?)"
         cur = con.cursor()
@@ -199,7 +199,7 @@ def render_admin():
     db = get_db()
     words = db.execute('SELECT * FROM vocab_list').fetchall()
     categories = db.execute('SELECT * FROM category').fetchall()
-    #get words and categories from database
+    # get words and categories from database
     return render_template("admin.html", logged_in=is_logged_in(), teacher_in=teacher_logged_in(), words=words,
                            categories=categories)
 
@@ -215,7 +215,7 @@ def add_word():
     editor_id = session.get("user_id")
     print(maori, english, cat_id, definition, level, editor_id)
     image = "noimage.png"
-   #get word's data
+    # get word's data
     db.execute("INSERT INTO vocab_list(Maori, English, cat_id, Definition, Level, editor_id,images)"
                " VALUES (?, ?, ?,?, ?, ?,?)",
                (maori, english, cat_id, definition, level, editor_id, image))
@@ -228,9 +228,9 @@ def search():
     db = get_db()
     if request.method == 'POST':
         search_term = request.form['search_term']
-        # Use '=' operator for exact match
-        words = db.execute('SELECT * FROM vocab_list WHERE word_m = ? OR word_e = ?',
+        words = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ? OR English LIKE ?',
                            (search_term, search_term)).fetchall()
+
         return render_template('search_results.html', words=words)
     else:
         return render_template('search.html')
@@ -241,8 +241,8 @@ def search_results():
     maori = request.args.get('maori')
     english = request.args.get('english')
     db = get_db()
-    results = db.execute('SELECT * FROM vocab_list WHERE lower(Maori) = ? OR lower(English) = ?',
-                         (maori.lower(), english.lower(),)).fetchall()
+    results = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ? OR English LIKE ?',
+                         (maori, english,)).fetchall()
     return render_template('search_results.html', results=results)
 
 
