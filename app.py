@@ -225,25 +225,27 @@ def add_word():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    db = get_db()
     if request.method == 'POST':
-        search_term = request.form['search_term']
-        words = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ? OR English LIKE ?',
-                           (search_term, search_term)).fetchall()
-
-        return render_template('search_results.html', words=words)
-    else:
-        return render_template('search.html')
+       maori=request.form.get('maori')
+       english=request.form.get('english')
+       return render_template('search_results.html', maori=maori, english=english)
+    return render_template('search.html')
 
 
 @app.route('/search_results')
 def search_results():
+    db=get_db()
     maori = request.args.get('maori')
     english = request.args.get('english')
-    db = get_db()
-    results = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ? OR English LIKE ?',
-                         (maori, english,)).fetchall()
+    if maori and not english:
+        results = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ?', ('%{}%'.format(maori),)).fetchall()
+    elif english and not maori:
+        results = db.execute('SELECT * FROM vocab_list WHERE English LIKE ?', ('%{}%'.format(english),)).fetchall()
+    elif maori and english:
+        results = db.execute('SELECT * FROM vocab_list WHERE Maori LIKE ? AND English LIKE ?',
+                             ('%{}%'.format(maori), '%{}%'.format(english))).fetchall()
+    else:
+        results = []
     return render_template('search_results.html', results=results)
-
 
 app.run(host='0.0.0.0', debug=True)
