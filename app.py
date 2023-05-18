@@ -226,15 +226,15 @@ def add_word():
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == 'POST':
-       maori=request.form.get('maori')
-       english=request.form.get('english')
-       return render_template('search_results.html', maori=maori, english=english)
+        maori = request.form.get('maori')
+        english = request.form.get('english')
+        return render_template('search_results.html', maori=maori, english=english)
     return render_template('search.html')
 
 
 @app.route('/search_results')
 def search_results():
-    db=get_db()
+    db = get_db()
     maori = request.args.get('maori')
     english = request.args.get('english')
     if maori and not english:
@@ -247,5 +247,6 @@ def search_results():
     else:
         results = []
     return render_template('search_results.html', results=results)
+
 
 app.run(host='0.0.0.0', debug=True)
