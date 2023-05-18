@@ -1,5 +1,6 @@
 import os
 import sqlite3
+from datetime import datetime
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
 from flask import Flask, render_template, request, redirect, session, app, g
@@ -216,9 +217,10 @@ def add_word():
     print(maori, english, cat_id, definition, level, editor_id)
     image = "noimage.png"
     # get word's data
-    db.execute("INSERT INTO vocab_list(Maori, English, cat_id, Definition, Level, editor_id,images)"
-               " VALUES (?, ?, ?,?, ?, ?,?)",
-               (maori, english, cat_id, definition, level, editor_id, image))
+    date = datetime.now().date()
+    db.execute("INSERT INTO vocab_list(Maori, English, cat_id, Definition, Level, editor_id,images,date)"
+               " VALUES (?, ?, ?,?, ?, ?,?,?)",
+               (maori, english, cat_id, definition, level, editor_id, image, date))
     db.commit()
     return redirect('/list')
 

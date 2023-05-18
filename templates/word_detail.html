@@ -16,6 +16,7 @@
     <h3>Level:</h3><h5>{{ word[4] }}</h5>
     <img src="/static/images/{{ word[7] }}">
     <h4>Editor:</h4><h5>{{ editor[0] }}</h5>
+    <h4>Create date:</h4><h5>{{ word[8] }}</h5>
   </body>
     {% if teacher_in %}
      <form method="POST" action="/word/{{ word['word_id'] }}/delete">
