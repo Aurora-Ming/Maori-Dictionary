@@ -7,15 +7,15 @@
 <form class="myform" method="POST" action="/add_word">
      <div class="form-group">
         <div class="form-label">Maori:</div>
-        <div class="form-element"><label for="Maori"></label><input type="text" name="Maori" id="Maori" required></div>
+        <div class="form-element"><label for="Maori"></label><input type="text" name="Maori" id="Maori" required maxlength="30"><br><span>Less than 30 characters.</span><br></div>
      </div>
      <div class="form-group">
         <div class="form-label">English:</div>
-        <div class="form-element"><label for="English"></label><input type="text" name="English" id="English" required></div>
+        <div class="form-element"><label for="English"></label><input type="text" name="English" id="English" required maxlength="30"><br><span>Less than 30 characters.</span><br></div>
      </div>
      <div class="form-group">
         <div class="form-label">Definition:</div>
-        <div class="form-element"><label for="Definition"></label><input type="text" name="Definition" id=Definition" required></div>
+        <div class="form-element"><label for="Definition"></label><input type="text" name="Definition" id=Definition" required maxlength="500"><br><span>Less than 500 characters.</span><br></div>
      </div>
      <div class="form_group">
          <div class="form-label">Category:</div>
