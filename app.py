@@ -129,6 +129,8 @@ def render_login():
         user_data = cur.fetchone()
         con.close()
         # Extract user data from the database
+        if user_data is  None:
+            return redirect("/login?error=Invalid+username")
         try:
             user_id = user_data[0]
             first_name = user_data[1]
@@ -136,6 +138,7 @@ def render_login():
             account_type = user_data[3]
         except IndexError:
             return redirect("/login?error=Invalid+username+or+password")
+
 
         if not bcrypt.check_password_hash(db_password, password):
             return redirect(request.referrer + "?error=Email+invalid+or+password incorrect")
